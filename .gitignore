@@ -1,0 +1,15 @@
+# secrets & local state
+backend/.env
+frontend/.env.local
+backend/data/
+*.db
+# python
+backend/.venv/
+__pycache__/
+.pytest_cache/
+# node
+frontend/node_modules/
+frontend/.next/
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
+.venv/

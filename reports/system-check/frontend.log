@@ -1,0 +1,10 @@
+   ▲ Next.js 15.5.27
+   - Local:        http://127.0.0.1:13000
+   - Network:      http://127.0.0.1:13000
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling /fact-checker ...
+ ✓ Compiled /fact-checker in 3.8s (711 modules)
+ GET /fact-checker 200 in 4384ms
+[?25h

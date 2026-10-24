@@ -1,0 +1,491 @@
+{
+  "python_environment": "/home/jaina/FactAlign/.venv",
+  "groq_requests": 0,
+  "mode": "demo",
+  "checks": {
+    "backend_health": {
+      "status": "ok",
+      "version": "1.0.0",
+      "database": "ok",
+      "mode": "demo",
+      "time": "2026-10-20T18:11:36.359250+00:00"
+    },
+    "cors": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000"
+    },
+    "frontend_api_contract_tests": {
+      "exit_code": 0,
+      "output": "\n> FactAlign-frontend@1.0.0 test\n> vitest run\n\n\n RUN  v2.1.9 /home/jaina/FactAlign/frontend\n\n ✓ tests/utils.test.ts (2 tests) 2ms\n ✓ tests/claim-verification.test.ts (3 tests) 16ms\n ✓ tests/api.integration.test.ts (6 tests) 548ms\n   ✓ frontend API client <-> backend contract > metrics, benchmark evaluation and experiments return chart-ready data 401ms\n\n Test Files  3 passed (3)\n      Tests  11 passed (11)\n   Start at  18:11:37\n   Duration  1.35s (transform 152ms, setup 0ms, collect 333ms, tests 567ms, environment 0ms, prepare 1.55s)\n\n"
+    },
+    "pdf_to_summary": {
+      "status": 200,
+      "pages_preserved": true
+    },
+    "frontend_page": {
+      "status": 200,
+      "contains_verification_ui": true,
+      "api_url_literal_in_initial_html": false
+    },
+    "integration_success": true,
+    "local_nli_readiness_before_setup": {
+      "status": 503,
+      "response": {
+        "detail": "Claim-level models are unavailable. Install requirements-nli.txt and cache the configured embedding and XLM-R models (see README). No Groq extraction request was sent."
+      }
+    },
+    "local_nli_readiness": {
+      "status": 200,
+      "all_three_real_verification_requests_succeeded": true,
+      "environment": "/home/jaina/FactAlign/.venv/bin/python",
+      "local_models_ready": true,
+      "tokenizer": "XLMRobertaTokenizer",
+      "native_tokenizer_scores_match_recorded_run": true,
+      "groq_requests": 0
+    },
+    "frontend_bundle_api_url": {
+      "url": "http://127.0.0.1:18000",
+      "present": true
+    },
+    "pdf_text_tokenization": {
+      "words": 45,
+      "tokens": 45,
+      "tokens_preserved": true
+    },
+    "test_counts": {
+      "backend_passed": 109,
+      "frontend_passed": 11,
+      "frontend_skipped": 0,
+      "typescript": "passed"
+    }
+  },
+  "language_results": [
+    {
+      "language": "hi",
+      "source": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+      "source_words": 15,
+      "summaries": [
+        {
+          "strategy": "standard",
+          "summary": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+          "summary_words": 15,
+          "detected_language": "hi",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.18,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+                "status": "supported",
+                "evidence": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.87,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        },
+        {
+          "strategy": "factuality",
+          "summary": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+          "summary_words": 15,
+          "detected_language": "hi",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.19,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+                "status": "supported",
+                "evidence": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.49,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        }
+      ]
+    },
+    {
+      "language": "en",
+      "source": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+      "source_words": 15,
+      "summaries": [
+        {
+          "strategy": "standard",
+          "summary": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+          "summary_words": 15,
+          "detected_language": "en",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.23,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+                "status": "supported",
+                "evidence": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.61,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        },
+        {
+          "strategy": "factuality",
+          "summary": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+          "summary_words": 15,
+          "detected_language": "en",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.17,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+                "status": "supported",
+                "evidence": "The government announced ten new schools for students in Delhi on Monday during its meeting.",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.46,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        }
+      ]
+    },
+    {
+      "language": "hinglish",
+      "source": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+      "source_words": 15,
+      "summaries": [
+        {
+          "strategy": "standard",
+          "summary": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+          "summary_words": 15,
+          "detected_language": "hinglish",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.19,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+                "status": "supported",
+                "evidence": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.42,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        },
+        {
+          "strategy": "factuality",
+          "summary": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+          "summary_words": 15,
+          "detected_language": "hinglish",
+          "compression_ratio": 1.0,
+          "inference_ms": 0.18,
+          "verification": {
+            "method": "rule",
+            "method_label": "Rule-based heuristic (offline; not an AI model)",
+            "claims": [
+              {
+                "claim": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+                "status": "supported",
+                "evidence": "Government ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+                "evidence_index": 0,
+                "explanation": "The key terms, numbers, dates and polarity of the claim match the source passage.",
+                "confidence": null,
+                "evidence_score": 1.0,
+                "checks": [
+                  {
+                    "name": "negation",
+                    "passed": true,
+                    "detail": "negation consistent"
+                  },
+                  {
+                    "name": "entities",
+                    "passed": true,
+                    "detail": "all entities found in source"
+                  },
+                  {
+                    "name": "overlap",
+                    "passed": true,
+                    "detail": "100% of the claim's content terms appear in the best passage"
+                  }
+                ],
+                "method": "rule"
+              }
+            ],
+            "metrics": {
+              "n_claims": 1,
+              "supported": 1,
+              "contradicted": 0,
+              "unverifiable": 0,
+              "support_rate": 1.0,
+              "contradiction_rate": 0.0,
+              "unverifiable_rate": 0.0,
+              "unsupported_rate": 0.0,
+              "formula": "support_rate = supported_claims / total_claims"
+            },
+            "limitations": "Automatic verification is an estimate, not a guarantee of correctness. Rule-based checks rely on lexical overlap and can miss paraphrases, implicit reasoning, spelled-out numbers (e.g. 'five') and entities that are not capitalised Latin names or in the built-in Hindi gazetteer. LLM judgements can be wrong or inconsistent. Treat 'Supported' as 'no problem detected', and review 'Contradicted'/'Unverifiable' items manually.",
+            "is_ai_verification": false,
+            "n_source_passages": 1,
+            "verify_ms": 0.67,
+            "mode": "demo",
+            "model": null,
+            "run_id": null
+          }
+        }
+      ]
+    }
+  ],
+  "pdf_results": [
+    {
+      "case": "three-page Hindi/English/Hinglish PDF",
+      "status": 200,
+      "exact_unicode_roundtrip": true,
+      "document": {
+        "filename": "multilingual.pdf",
+        "text": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।\nThe government announced ten new schools for students in Delhi on Monday during its meeting.\nGovernment ne Monday ko Delhi mein students ke liye das schools kholne ka announcement kiya.",
+        "chars": 261,
+        "words": 45,
+        "pages": [
+          {
+            "page": 1,
+            "start": 0,
+            "end": 75
+          },
+          {
+            "page": 2,
+            "start": 76,
+            "end": 168
+          },
+          {
+            "page": 3,
+            "start": 169,
+            "end": 261
+          }
+        ]
+      }
+    },
+    {
+      "case": "corrupt",
+      "status": 422,
+      "response": {
+        "detail": "Could not read this PDF file."
+      }
+    },
+    {
+      "case": "blank",
+      "status": 422,
+      "response": {
+        "detail": "No selectable text found in the PDF (scanned PDFs need OCR, which is not included)."
+      }
+    },
+    {
+      "case": "encrypted",
+      "status": 422,
+      "response": {
+        "detail": "This PDF is password-protected."
+      }
+    }
+  ],
+  "report_groq_requests": 3
+}

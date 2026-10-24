@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 42 38% 95%;
+  --surface: 42 45% 98.5%;
+  --sunken: 40 28% 92%;
+  --fg: 28 12% 14%;
+  --muted: 28 8% 38%;
+  --border: 38 22% 85%;
+  --accent: 15 56% 42%;
+  --accent-fg: 42 45% 98.5%;
+  --accent-soft: 18 55% 92%;
+  --ok: 150 40% 28%;
+  --ok-soft: 150 35% 91%;
+  --bad: 4 58% 42%;
+  --bad-soft: 5 70% 94%;
+  --warn: 36 80% 30%;
+  --warn-soft: 40 80% 91%;
+  --shadow: 28 30% 20%;
+  color-scheme: light;
+}
+.dark {
+  --bg: 30 9% 9%;
+  --surface: 30 8% 12.5%;
+  --sunken: 30 8% 10.5%;
+  --fg: 40 25% 92%;
+  --muted: 36 10% 66%;
+  --border: 30 6% 21%;
+  --accent: 16 62% 62%;
+  --accent-fg: 30 9% 9%;
+  --accent-soft: 16 30% 19%;
+  --ok: 150 40% 62%;
+  --ok-soft: 150 25% 15%;
+  --bad: 6 70% 68%;
+  --bad-soft: 6 30% 17%;
+  --warn: 38 75% 62%;
+  --warn-soft: 38 30% 16%;
+  --shadow: 0 0% 0%;
+  color-scheme: dark;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { @apply bg-bg text-fg font-sans antialiased; font-feature-settings: "kern", "liga"; }
+::selection { background: hsl(var(--accent) / 0.25); }
+:focus-visible { outline: 2px solid hsl(var(--accent)); outline-offset: 2px; border-radius: 6px; }
+.prose-summary { font-family: theme("fontFamily.serif"); font-size: 1.06rem; line-height: 1.8; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 8px; }
+.skeleton { position: relative; overflow: hidden; background: hsl(var(--sunken)); border-radius: 8px; }
+.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, hsl(var(--surface) / 0.7), transparent); animation: shimmer 1.4s infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

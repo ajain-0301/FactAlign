@@ -1,0 +1,7 @@
+{
+  "environment": "/home/jaina/FactAlign/.venv/bin/python",
+  "local_models_ready": true,
+  "tokenizer": "XLMRobertaTokenizer",
+  "native_tokenizer_scores_match_recorded_run": true,
+  "groq_requests": 0
+}

@@ -1,0 +1,5 @@
+sentence-transformers>=3.3,<6
+transformers>=4.45,<5
+torch>=2.4,<3
+sentencepiece>=0.2
+protobuf>=4.25

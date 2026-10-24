@@ -1,0 +1,17 @@
+{
+  "timestamp_utc": "2026-10-20T16:51:25.490868+00:00",
+  "request_limit": 12,
+  "results": [
+    {
+      "language": "hi",
+      "source": "सरकार ने सोमवार को दिल्ली में छात्रों के लिए दस विद्यालय खोलने की घोषणा की।",
+      "source_words": 15,
+      "summary_http_status": 502,
+      "response": {
+        "detail": "Model 'llama-3.3-70b-versatile' was not found for this API key.",
+        "kind": "provider_error"
+      }
+    }
+  ],
+  "api_requests_attempted": 1
+}

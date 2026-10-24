@@ -1,0 +1,30 @@
+[
+  {
+    "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "fast_type": "PreTrainedTokenizerFast",
+    "reference_type": "PreTrainedTokenizerFast",
+    "cases": 6,
+    "tokens_per_language": [
+      19,
+      18,
+      21
+    ],
+    "independent_sentencepiece_reference": false,
+    "fast_matches_saved_backend": true
+  },
+  {
+    "model": "joeddav/xlm-roberta-large-xnli",
+    "fast_type": "XLMRobertaTokenizerFast",
+    "reference_type": "XLMRobertaTokenizer",
+    "cases": 6,
+    "fast_matches_sentencepiece_reference": true,
+    "tokens_per_language": [
+      19,
+      18,
+      21
+    ],
+    "independent_sentencepiece_reference": true,
+    "scored_pairs_compared": 10,
+    "all_scored_pair_inputs_identical": true
+  }
+]

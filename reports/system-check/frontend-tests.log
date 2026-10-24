@@ -1,0 +1,18 @@
+
+> FactAlign-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/jaina/FactAlign/frontend
+
+ ✓ tests/utils.test.ts (2 tests) 2ms
+ ✓ tests/claim-verification.test.ts (3 tests) 16ms
+ ✓ tests/api.integration.test.ts (6 tests) 548ms
+   ✓ frontend API client <-> backend contract > metrics, benchmark evaluation and experiments return chart-ready data 401ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  18:11:37
+   Duration  1.35s (transform 152ms, setup 0ms, collect 333ms, tests 567ms, environment 0ms, prepare 1.55s)
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
