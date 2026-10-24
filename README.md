@@ -16,55 +16,177 @@ FactAlign summarizes Hindi, English and Hindi-English (Hinglish) text with two s
 
 ---
 
-## 1. Quick start (Windows)
+## 1. First-time setup and later runs
 
-**Prerequisites:** [Python 3.11+](https://www.python.org/downloads/) (tick *Add python.exe to PATH*) and [Node.js 18+ (LTS)](https://nodejs.org). Internet is needed once to install dependencies.
+The project uses **one virtual environment at `FactAlign/.venv`**. Reuse it when it already exists; do not create `backend/.venv`. Python virtual environments and `node_modules` are platform-specific: install them locally rather than copying them between Windows and Linux/macOS.
 
-### Option A — one click
-Double-click **`start.bat`** in the project folder. It checks Python/Node, creates a virtual environment, installs dependencies (first run only), copies `backend\.env.example` to `backend\.env` **only if that file doesn't exist**, then opens the backend and frontend in two separate windows and your browser.
+**Prerequisites:** install [Python](https://www.python.org/downloads/) and [Node.js](https://nodejs.org/), then reopen your terminal. **Python 3.12 and Node.js 22** are the tested versions; the Windows launcher accepts Python 3.11+ and Node.js 18.18+. First-time dependency/model setup needs internet. Local XLM-R weights are large and need sufficient disk space and RAM.
 
-* Frontend: <http://localhost:3000>
-* Backend API: <http://localhost:8000> · interactive docs: <http://localhost:8000/docs>
-* `stop.bat` closes both server windows. The first page load can take 10–30 s while Next.js compiles.
+### Windows — first time (recommended launcher)
 
-### Option B — PowerShell, step by step
+Open PowerShell in the project folder, or replace the example path below:
 
 ```powershell
-# --- backend (terminal 1) ---
-cd FactAlign\backend
-py -3 -m venv .venv
-.\.venv\Scripts\Activate.ps1          # if blocked: Set-ExecutionPolicy -Scope Process Bypass
-pip install -r requirements.txt
-Copy-Item .env.example .env           # skip if .env already exists
-uvicorn app.main:app --host 127.0.0.1 --port 8000
+cd "C:\path\to\FactAlign"
+.\start.bat --setup-nli
+```
 
-# --- frontend (terminal 2) ---
-cd FactAlign\frontend
-npm install
-Copy-Item .env.example .env.local     # optional; default API uses the Next.js proxy
+This performs the full setup for claim-level verification and starts both servers:
+
+1. Reuses the root `.venv`, or creates it if absent. An existing non-Windows environment is left untouched and reported as incompatible.
+2. Installs/checks `backend/requirements.txt` and preserves existing environment files. Missing `backend/.env` and `frontend/.env.local` are copied from their templates.
+3. With **`--setup-nli`**, installs optional ML dependencies and caches the multilingual embedding and XLM-R models. It selects CPU PyTorch when PyTorch is not installed. **Model setup never calls Groq.** Large downloads may take time.
+4. Uses `npm ci` with `frontend/package-lock.json` to install frontend dependencies.
+5. Checks that ports **8000** and **3000** are free, starts the backend, waits for its health endpoint, starts the frontend, and opens the browser. Next.js may still need time to compile the first page.
+
+For the basic app without local NLI dependencies/model downloads, use **`start.bat`** without the flag. Demo, uploads, history, Groq summaries and the older verification methods do not require local XLM-R.
+
+Configure Groq in **`backend/.env`** when you want real AI mode:
+
+```dotenv
+GROQ_API_KEY=your_actual_groq_key
+GROQ_MODEL=your_available_groq_model_id
+PROVIDER_MODE=auto
+VERIFICATION_LOCAL_ONLY=true
+```
+
+Replace both placeholders with your own key and an accessible model ID. Keep the other template settings. An existing configured `.env` is never overwritten. If you edit it after startup, run `stop.bat`, then `start.bat` again to reload it. Leaving the key empty keeps Auto in Demo mode.
+
+Open **http://localhost:3000**. Backend health: **http://127.0.0.1:8000/api/health**; API docs: **http://127.0.0.1:8000/docs**. Select **Claim-level NLI** in the Fact Checker or summary verifier when you want local XLM-R verification.
+
+### Windows — every later run
+
+From the project folder:
+
+```powershell
+.\start.bat
+```
+
+Or double-click `start.bat`. Unchanged dependency fingerprints skip installation, and local models are not downloaded at startup. The first launcher use after a manual installation may check base dependencies and reinstall frontend dependencies once to establish these fingerprints. Changes to base requirements or the npm lockfile trigger their respective setup steps again.
+
+Stop launcher-started servers with:
+
+```powershell
+.\stop.bat
+```
+
+The launcher helper records each server's parent PID, creation time and project identity under `backend/data/launcher/`. Stop validates those records and closes the corresponding process trees, including uvicorn/npm/Next.js children. It does not kill every Python/Node process or servers belonging to another project copy. It is safe to run when no managed servers are running.
+
+For **manually started servers**, use **Ctrl+C** in each terminal. Also stop servers from an older launcher version manually once before using the updated launcher. If either port is occupied, startup stops with a message rather than starting a duplicate instance. If startup partially fails, inspect its server window and use `stop.bat` before retrying.
+
+To add/reconfigure local NLI after a basic installation, or after optional ML requirements/model IDs change:
+
+```powershell
+.\stop.bat
+.\start.bat --setup-nli
+```
+
+There is no need to repeat `--setup-nli` for ordinary later runs. The batch files use `backend/scripts/windows_launcher.ps1`; keep that helper with the project.
+
+### Windows — manual first-time setup
+
+These commands use the root environment directly and do not require activation or an execution-policy change. Skip creation if the Windows environment already exists.
+
+```powershell
+cd "C:\path\to\FactAlign"
+if (!(Test-Path .venv\Scripts\python.exe)) { py -3.12 -m venv .venv }
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+if (!(Test-Path backend\.env)) { Copy-Item backend\.env.example backend\.env }
+notepad backend\.env
+```
+
+For the **optional local claim-level NLI workflow**, also run:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install "torch>=2.4,<3" --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements-nli.txt
+.\.venv\Scripts\python.exe backend\scripts\cache_verification_models.py
+```
+
+Start the backend (terminal 1, project root):
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
+```
+
+Set up/start the frontend (terminal 2):
+
+```powershell
+cd "C:\path\to\FactAlign\frontend"
+npm.cmd ci
+if (!(Test-Path .env.local)) { Copy-Item .env.example .env.local }
+npm.cmd run dev
+```
+
+For subsequent manual runs, use only the backend start command and `npm.cmd run dev` in their respective terminals. Stop each with Ctrl+C. `npm.cmd` avoids PowerShell's `npm.ps1` execution-policy issue.
+
+### Linux/macOS — first time and later runs
+
+From the project root, reuse an existing native `.venv`:
+
+```bash
+cd /path/to/FactAlign
+[ -x .venv/bin/python ] || python3.12 -m venv .venv
+.venv/bin/python -m pip install -r backend/requirements.txt
+[ -f backend/.env ] || cp backend/.env.example backend/.env
+# Edit backend/.env with your Groq key and accessible model ID if using real mode.
+```
+
+Optional local NLI setup (once):
+
+```bash
+# Linux CPU-only setup; skip this line on macOS:
+.venv/bin/python -m pip install 'torch>=2.4,<3' --index-url https://download.pytorch.org/whl/cpu
+.venv/bin/python -m pip install -r backend/requirements-nli.txt
+.venv/bin/python backend/scripts/cache_verification_models.py
+```
+
+Terminal 1 — backend, both first and later runs:
+
+```bash
+cd /path/to/FactAlign
+.venv/bin/python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
+```
+
+Terminal 2 — frontend first run:
+
+```bash
+cd /path/to/FactAlign/frontend
+npm ci
+[ -f .env.local ] || cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000>. The top bar shows **Demo mode** or **Real AI · model**.
+For later frontend runs, just `cd /path/to/FactAlign/frontend` and `npm run dev`. Stop both servers with Ctrl+C. The `.bat` launchers are for Windows.
 
-### Enable real AI mode
-1. Create a key at <https://console.groq.com>.
-2. Edit `backend\.env` → `GROQ_API_KEY=your-key` (keep `PROVIDER_MODE=auto`).
-3. Restart the backend window (close it and run `start.bat` again).
-4. Open **Settings → Test connection**. The UI says *Verified* only after a real API call succeeds.
+### Connection checks and API quota
 
-The key is read by the backend only; it is never sent to the browser, never returned by any endpoint, and `.env` is git-ignored.
+Check the backend without consuming Groq quota:
 
-### What needs internet / credentials / downloads
+```powershell
+# Windows PowerShell
+Invoke-RestMethod http://127.0.0.1:8000/api/health
+```
 
-| Feature | Internet | API key | Model download |
+```bash
+# Linux/macOS
+curl http://127.0.0.1:8000/api/health
+```
+
+Expect `status: ok` and `database: ok`. The frontend normally sends `/api` requests through Next.js, which proxies to `BACKEND_API_URL=http://127.0.0.1:8000` from `frontend/.env.local`. `NEXT_PUBLIC_API_URL` is an optional direct-backend override and requires matching backend CORS origins. Keep API keys out of frontend environment files.
+
+**Starting/stopping servers, reading health/settings, and downloading local models do not call Groq.** Real summarization, LLM/Hybrid verification, claim extraction and **Settings → Test connection** consume quota. The launcher never tests the Groq connection automatically. A configured key alone does not prove it is valid.
+
+| Feature | Internet | Groq key | Local model download |
 |---|---|---|---|
-| Installing dependencies (first run) | yes | no | no |
-| Demo summarization, rule-based verification, history, experiments, evaluation, charts | **no** | no | **no** |
-| Real AI summarization / LLM verification | yes | **yes** (Groq) | no (hosted model) |
-| PDF/DOCX upload text extraction | no | no | no |
+| First dependency installation | yes | no | no |
+| Demo summaries, rule verification, history and charts | no | no | no |
+| Real summaries and LLM/Hybrid verification | yes | yes | no |
+| PDF/DOCX extraction | no | no | no |
+| Local NLI setup | yes, initially | no | yes, once per model/cache |
+| Claim-level verification | yes for Groq claim extraction | yes | cached embeddings/XLM-R used locally |
 
-No ML models are downloaded; the app has no heavy ML dependencies.
+`VERIFICATION_LOCAL_ONLY=true` prevents automatic model downloads during verification. Missing local models produce a setup error; use the explicit model-cache step above.
 
 ---
 
@@ -248,7 +370,7 @@ Backend tests cover: health; validation (empty/whitespace/short/oversized/malfor
 | Hindi shows as boxes | Use a current Windows/Edge/Chrome; fonts "Nirmala UI"/"Noto Sans Devanagari" are used. |
 | CSV shows garbled Hindi in Excel | Use *Data → From Text/CSV* with UTF-8 (files already include a BOM, which normally works). |
 | Reset all data | Stop the backend and delete `backend\data\FactAlign.db`. |
-| Reinstall backend dependencies | Delete `backend\.venv\.deps-installed` and run `start.bat`. |
+| Reinstall backend dependencies | Delete `.venv\.factalign-base.sha256` and run `start.bat`. For optional ML dependencies, use `start.bat --setup-nli`. |
 
 ---
 
@@ -290,10 +412,13 @@ human-labelled evaluation; support is not a claim of measured accuracy.
 
 Install the optional local model dependencies and explicitly cache the models once:
 
+On Windows, use `start.bat --setup-nli` from the project root (stop existing servers first).
+For a manually managed Linux/macOS installation, use the root environment:
+
 ```bash
-cd backend
-pip install -r requirements-nli.txt
-python scripts/cache_verification_models.py
+cd /path/to/FactAlign
+.venv/bin/python -m pip install -r backend/requirements.txt -r backend/requirements-nli.txt
+.venv/bin/python backend/scripts/cache_verification_models.py
 ```
 
 The cache command downloads large model files from Hugging Face and loads them locally;
