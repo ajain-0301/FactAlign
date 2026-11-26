@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BarChart3, FlaskConical, LayoutDashboard, SquarePen } from "lucide-react";
 import { api } from "@/lib/api";
 import { useApp } from "@/components/app-provider";
@@ -15,6 +16,7 @@ import { formatDate, LANG_SHORT, ms, num, pct, STRATEGY_LABEL } from "@/lib/util
 
 export default function OverviewPage() {
   const { backendDown } = useApp();
+  const pathname = usePathname();
   const [m, setM] = React.useState<MetricsResponse | null>(null);
   const [recent, setRecent] = React.useState<Run[]>([]);
   const [exps, setExps] = React.useState<Experiment[]>([]);
@@ -22,10 +24,13 @@ export default function OverviewPage() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
+    if (pathname !== "/overview") return;
+    setLoading(true);
+    setError(null);
     Promise.all([api.metrics({}), api.history({ limit: 5 }), api.experiments()])
       .then(([mm, h, e]) => { setM(mm); setRecent(h.items); setExps(e.items.slice(0, 5)); })
       .catch((e) => setError((e as Error).message)).finally(() => setLoading(false));
-  }, []);
+  }, [pathname]);
 
   if (loading) return <div className="space-y-4"><div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24" />)}</div><Skeleton className="h-72" /></div>;
   if (error) return <ErrorNote message={backendDown ? "The backend is offline, so there is nothing to show yet." : error} />;
@@ -47,17 +52,17 @@ export default function OverviewPage() {
     <div className="space-y-8">
       <div>
         <h2 className="font-serif text-3xl tracking-tight">Overview</h2>
-        <p className="mt-1 text-sm text-muted">Live statistics from your local database. {m.counts.demo} demo run{m.counts.demo === 1 ? "" : "s"} · {m.counts.real} real-AI run{m.counts.real === 1 ? "" : "s"}.</p>
+        <p className="mt-1 text-sm text-muted">Live statistics from your local database.</p>
       </div>
       {m.counts.demo > 0 && <InfoNote>{m.counts.demo} of {m.counts.all} runs used the rule-based demo engine. Their numbers describe that baseline, not an LLM. Use Evaluation to filter by mode.</InfoNote>}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
-        <Stat label="Total runs" value={m.counts.all} sub={`${m.counts.workspace} workspace · ${m.counts.experiments} experiment · ${m.counts.evaluation} benchmark`} />
         <Stat label="Avg summary length" value={`${num(t.avg_summary_words, 0)}`} sub="words" />
         <Stat label="Avg compression" value={pct(t.avg_compression_ratio, 1)} sub="summary ÷ source" hint="Lower means a shorter summary" />
         <Stat label="Avg inference" value={ms(t.avg_inference_ms)} sub={`median ${ms(t.median_inference_ms)}`} />
-        <Stat label="Claim-support rate" value={pct(t.claim_support_rate, 1)} sub={t.n_claims ? `${t.n_claims} claims · ${t.n_verified_runs} runs verified` : "no verified runs yet"} hint="Automatic estimate, not ground truth" />
-        <Stat label="With reference" value={t.n_with_reference ?? 0} sub={t.rougeL_f1 != null ? `ROUGE-L ${num(t.rougeL_f1, 3)}` : "ROUGE needs references"} />
+        <Stat label="ROUGE-L Precision" value={num(t.rougeL_precision, 3)} sub={t.rougeL_precision != null ? "against reference summaries" : "reference summaries needed"} />
+        <Stat label="ROUGE-L Recall" value={num(t.rougeL_recall, 3)} sub={t.rougeL_recall != null ? "against reference summaries" : "reference summaries needed"} />
+        <Stat label="ROUGE-L F1" value={num(t.rougeL_f1, 3)} sub={t.rougeL_f1 != null ? "against reference summaries" : "reference summaries needed"} />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-3">
@@ -70,7 +75,7 @@ export default function OverviewPage() {
           <CardContent className="grid gap-4 sm:grid-cols-3">
             {([["Compression (%)", "avg_compression_ratio", 100, (v: number) => `${v.toFixed(0)}%`],
                ["Inference (ms)", "avg_inference_ms", 1, (v: number) => `${v.toFixed(0)}`],
-               ["Claim support (%)", "claim_support_rate", 100, (v: number) => `${v.toFixed(0)}%`]] as const).map(([title, key, scale, fmt]) => (
+               ["ROUGE-L F1", "rougeL_f1", 1, (v: number) => v.toFixed(3)]] as const).map(([title, key, scale, fmt]) => (
               <div key={title}>
                 <div className="mb-1 text-center text-xs font-medium text-muted">{title}</div>
                 <MetricBars label={title} height={200} data={stratData(key, scale)} series={[{ key: "value", name: title }]} format={fmt} />
@@ -105,7 +110,7 @@ export default function OverviewPage() {
                 <li key={e.id} className="py-3">
                   <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-medium">{e.name}</span>
                     <Badge tone={e.status === "completed" ? "ok" : "bad"}>{e.status}</Badge>{e.mode === "demo" && <Badge tone="warn">demo</Badge>}</div>
-                  <p className="mt-0.5 text-xs text-muted">{formatDate(e.created_at)} · {e.results.n_runs ?? 0} runs · support {pct(e.results.overall?.claim_support_rate, 0)}</p>
+                  <p className="mt-0.5 text-xs text-muted">{formatDate(e.created_at)} · {e.results.n_runs ?? 0} runs</p>
                 </li>))}</ul>
             )}
           </CardContent>

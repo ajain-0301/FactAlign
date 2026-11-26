@@ -1,8 +1,47 @@
 import io
+import re
 
 import pytest
 
 from tests.conftest import EN_DOC, HI_DOC, HINGLISH_DOC
+
+
+class RuleAwareNLI:
+    def fits(self, text):
+        return True
+
+    def encode(self, texts):
+        vectors = []
+        for text in texts:
+            vector = [0.0] * 128
+            for token in re.findall(r"[\w\u0900-\u097f]+", text.lower()):
+                vector[sum(ord(char) for char in token) % len(vector)] += 1
+            vectors.append(vector)
+        return vectors
+
+    def score(self, premise, hypothesis):
+        from app.services.verification import Retriever, _source_facts, _verify_rule_passage
+
+        retriever = Retriever(premise)
+        start, end, score = retriever.best(hypothesis, top=1)[0]
+        result = _verify_rule_passage(
+            hypothesis,
+            retriever,
+            _source_facts(premise),
+            (start, end, score, 0.0),
+        )
+        if result["status"] == "supported":
+            return {"entailment": 0.94, "contradiction": 0.03, "neutral": 0.03}
+        if result["status"] == "contradicted":
+            return {"entailment": 0.03, "contradiction": 0.94, "neutral": 0.03}
+        return {"entailment": 0.05, "contradiction": 0.05, "neutral": 0.9}
+
+
+@pytest.fixture(autouse=True)
+def local_rule_nli(monkeypatch):
+    from app.services import nli_models
+
+    monkeypatch.setattr(nli_models, "get_models", lambda *args, **kwargs: RuleAwareNLI())
 
 
 # ------------------------------------------------------------------ health & validation
@@ -199,8 +238,176 @@ def test_verify_supported(client):
     d = verify(client, "The corporation will install 40 monitoring stations.")
     assert d["claims"][0]["status"] == "supported" and d["claims"][0]["evidence"]
     assert d["claims"][0]["confidence"] is None  # no calibrated confidence in rule mode
-    assert d["is_ai_verification"] is False and "Rule-based" in d["method_label"]
+    assert d["is_ai_verification"] is True and "local XLM-R NLI" in d["method_label"]
     assert "not a guarantee" in d["limitations"]
+
+
+def test_rule_verification_uses_local_xlm_r(client, monkeypatch):
+    from app.services import nli_models
+
+    calls = []
+
+    class ContradictionNLI(RuleAwareNLI):
+        def score(self, premise, hypothesis):
+            calls.append((premise, hypothesis))
+            return {"entailment": 0.02, "contradiction": 0.92, "neutral": 0.06}
+
+    def load_models(*args, **kwargs):
+        assert kwargs["local_only"] is True
+        return ContradictionNLI()
+
+    monkeypatch.setattr(nli_models, "get_models", load_models)
+    claim = "The corporation will install 40 monitoring stations."
+    result = verify(client, claim)["claims"][0]
+    assert result["status"] == "contradicted"
+    assert result["checks"][-1]["name"] == "nli"
+    assert calls and all(hypothesis == claim for _, hypothesis in calls)
+    assert (result["evidence"], claim) in calls
+
+
+def test_semantic_retrieval_finds_paraphrased_support(client, monkeypatch):
+    from app.services import nli_models
+
+    class ParaphraseNLI(RuleAwareNLI):
+        def encode(self, texts):
+            aliases = {
+                "city": 1, "municipality": 1,
+                "banned": 2, "prohibited": 2,
+                "private": 3,
+                "car": 4, "cars": 4, "automobiles": 4,
+            }
+            vectors = []
+            for text in texts:
+                vector = [0.0] * 128
+                for token in re.findall(r"[\w\u0900-\u097f]+", text.lower()):
+                    if token in aliases:
+                        vector[aliases[token]] += 1
+                vectors.append(vector)
+            return vectors
+
+        def score(self, premise, hypothesis):
+            calls.append(premise)
+            if "prohibited private automobiles" in premise.lower():
+                return {"entailment": 0.94, "contradiction": 0.03, "neutral": 0.03}
+            if "world bank" in premise.lower():
+                return {"entailment": 0.03, "contradiction": 0.94, "neutral": 0.03}
+            return {"entailment": 0.05, "contradiction": 0.05, "neutral": 0.9}
+
+    model = ParaphraseNLI()
+    monkeypatch.setattr(nli_models, "get_models", lambda *args, **kwargs: model)
+    calls = []
+    source = (
+        "The city owns private cars. The municipality prohibited private automobiles. "
+        "The World Bank funded 900 schools in 1980."
+    )
+    result = verify(client, "The city banned private cars.", source)["claims"][0]
+
+    assert result["status"] == "supported"
+    assert "prohibited private automobiles" in result["evidence"]
+    assert not any(
+        "world bank" in premise.lower() and "prohibited private automobiles" not in premise.lower()
+        for premise in calls
+    )
+
+
+def test_factual_checks_wait_for_relevant_evidence():
+    from app.services.verification import Retriever, _source_facts, _verify_rule_passage
+
+    source = "The clinic opened in 2019."
+    retriever = Retriever(source)
+    result = _verify_rule_passage(
+        "The school enrolled 60 students in 2024.",
+        retriever,
+        _source_facts(source),
+        (0, 1, 0.0, 0.0),
+    )
+
+    assert [check["name"] for check in result["checks"]] == ["relevance"]
+
+
+def test_atomic_split_inherits_only_a_confident_subject():
+    from app.services.verification import _atomic_components
+
+    assert _atomic_components(
+        "The council approved the plan and allocated 40 million for it."
+    ) == ["The council approved the plan", "The council allocated 40 million for it."]
+    assert _atomic_components("Rapidly increased and became popular.") == [
+        "Rapidly increased and became popular."
+    ]
+    assert _atomic_components("The school opened but not implemented.") == [
+        "The school opened but not implemented."
+    ]
+    assert _atomic_components("The school not only opened but also welcomed students.") == [
+        "The school not only opened but also welcomed students."
+    ]
+    assert _atomic_components("The plan will cost 250 crore and be completed by December 2026.") == [
+        "The plan will cost 250 crore",
+        "The plan will be completed by December 2026.",
+    ]
+
+
+def test_atomic_split_preserves_hindi_and_hinglish_context():
+    from app.services.verification import _atomic_components
+
+    assert _atomic_components("सरकार ने 250 करोड़ रुपये खर्च किए और 10 स्कूल बनाए।") == [
+        "सरकार ने 250 करोड़ रुपये खर्च किए",
+        "सरकार ने 10 स्कूल बनाए।",
+    ]
+    assert _atomic_components(
+        "Government ने 100 crore rupees ka fund announce किया और 10 school build किए।"
+    ) == [
+        "Government ने 100 crore rupees ka fund announce किया",
+        "Government ने 10 school build किए।",
+    ]
+    assert _atomic_components(
+        "योजना में निजी कारों पर प्रतिबंध शामिल नहीं है और निगम 40 केंद्र लगाएगा।"
+    ) == [
+        "योजना में निजी कारों पर प्रतिबंध शामिल नहीं है",
+        "निगम 40 केंद्र लगाएगा।",
+    ]
+
+
+def test_multilingual_number_month_and_name_normalization():
+    from app.services.verification import _entity_keys, _multilingual_facts, _normalized_tokens
+
+    assert _multilingual_facts("five crore rupees")[1][0]["value"] == "50000000"
+    assert _multilingual_facts("पाँच करोड़ रुपये")[1][0]["value"] == "50000000"
+    assert _multilingual_facts("paanch karod rupaye")[1][0]["value"] == "50000000"
+    assert _multilingual_facts("15 agast 2023")[0][0]["key"] == "2023-08-15"
+    assert _entity_keys("श्रीमती मीरा राव") == _entity_keys("Meera Rao")
+    assert "nahi" in _normalized_tokens("Yojana mein ban nahi hai", drop_stop=True)
+
+
+def test_missing_entity_in_relevant_passage_is_not_a_contradiction():
+    from app.services.verification import Retriever, _source_facts, _verify_rule_passage
+
+    source = "The school opened in 2024. The clinic opened in 2019."
+    retriever = Retriever(source)
+    result = _verify_rule_passage(
+        "The school opened in Delhi in 2024.",
+        retriever,
+        _source_facts(source),
+        (0, 1, 1.0, 0.0),
+    )
+
+    assert result["status"] == "unverifiable"
+
+
+def test_atomic_api_results_keep_component_evidence_and_nli(client):
+    source = "The council approved the plan. The council allocated 40 million for it."
+    result = verify(
+        client,
+        "The council approved the plan and allocated 40 million for it.",
+        source,
+    )["claims"][0]
+
+    assert result["status"] == "supported"
+    assert len(result["atomic_results"]) == 2
+    for component in result["atomic_results"]:
+        assert component["evidence"]
+        assert component["nli_scores"]["entailment"] > 0.9
+        assert component["checks"]
+        assert component["explanation"]
 
 
 def test_verify_changed_number(client):
@@ -212,6 +419,54 @@ def test_verify_changed_number(client):
 def test_verify_changed_date(client):
     assert status_of(client, "The plan will be completed by December 2025.") == "contradicted"
     assert status_of(client, "Commissioner Meera Rao announced it on 14 March 2024.") == "contradicted"
+
+
+def test_unrelated_source_date_does_not_mask_evidence_conflict(client):
+    source = (
+        "The school opened in 2024. The clinic opened in 2019. "
+        "The museum closed in 2023. Another event occurred in 2025."
+    )
+    result = verify(client, "The school opened in 2025.", source)
+    assert result["claims"][0]["status"] == "contradicted"
+    assert "2024" in result["claims"][0]["explanation"]
+
+
+def test_unrelated_source_number_does_not_mask_evidence_conflict(client):
+    source = (
+        "The school enrolled 40 students. The clinic opened in 2019. "
+        "The museum closed in 2023. A bridge is 60 meters long."
+    )
+    result = verify(client, "The school enrolled 60 students.", source)
+    assert result["claims"][0]["status"] == "contradicted"
+    assert "40" in result["claims"][0]["explanation"]
+
+
+def test_unrelated_passage_negation_does_not_contradict_claim(client):
+    source = "The school opened in 2024. The school did not close successfully."
+    assert status_of(client, "The school opened successfully.", source) == "unverifiable"
+
+
+def test_not_only_is_not_treated_as_negation(client):
+    source = "The school not only opened but also welcomed students."
+    assert status_of(client, "The school opened.", source) == "supported"
+
+
+def test_conflicting_retrieved_passages_are_unverifiable(client):
+    source = "The school opened in 2024. The school opened in 2025."
+    result = verify(client, "The school opened in 2025.", source)["claims"][0]
+    assert result["status"] == "unverifiable"
+    assert "passages conflict" in result["explanation"]
+
+
+def test_entity_matching_uses_word_boundaries(client):
+    source = "The plan was approved annually."
+    assert status_of(client, "The plan was approved by Ann.", source) == "unverifiable"
+
+
+def test_hindi_and_english_entity_aliases_match(client):
+    source = "दिल्ली में 40 monitoring stations स्थापित किए गए।"
+    claim = "New Delhi में 40 monitoring stations स्थापित किए गए।"
+    assert status_of(client, claim, source) == "supported"
 
 
 def test_verify_negation_flip(client):

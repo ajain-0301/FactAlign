@@ -7,7 +7,12 @@ export type ClaimStatus = "supported" | "contradicted" | "unverifiable" | "unsup
 
 export interface SourcePage { page: number; start: number; end: number }
 export interface NLIScores { entailment: number; contradiction: number; neutral: number }
-export interface EvidencePassage { passage_id: number; text: string; page: number | null; start: number; end: number; retrieval_similarity: number; nli: NLIScores; checks: ClaimCheck[] }
+export interface EvidencePassage {
+  passage_id: number; text: string; page: number | null;
+  start: number | null; end: number | null;
+  retrieval_similarity: number; nli: NLIScores | null;
+  component?: string | null; checks: ClaimCheck[];
+}
 export interface ClaimCheck { name: string; passed: boolean; detail: string; outcome?: "match" | "mismatch" | "missing" | "review" | "not_applicable" }
 export interface Claim {
   claim: string;
@@ -103,7 +108,8 @@ export interface GroupAgg {
   n_runs: number; avg_source_words?: number | null; avg_summary_words?: number | null; avg_compression_ratio?: number | null;
   avg_inference_ms?: number | null; median_inference_ms?: number | null; avg_cmi?: number | null;
   n_verified_runs?: number; n_claims?: number; claim_support_rate?: number | null; claim_contradiction_rate?: number | null;
-  n_with_reference?: number; rouge1_f1?: number | null; rouge2_f1?: number | null; rougeL_f1?: number | null;
+  n_with_reference?: number; rouge1_f1?: number | null; rouge2_f1?: number | null;
+  rougeL_precision?: number | null; rougeL_recall?: number | null; rougeL_f1?: number | null;
 }
 export interface SeriesPoint {
   run_id: number; created_at: string; strategy: Strategy; language: string; mode: string; summary_words: number;
@@ -145,6 +151,7 @@ export interface MetricsResponse {
   language_distribution: Record<string, number>;
   series: SeriesPoint[];
   latest_evaluation: EvaluationRunOut | null;
+  rule_verifier_metrics: Pick<PerClass, "precision" | "recall"> | null;
   formulas: Record<string, string>;
   notes: string[];
 }

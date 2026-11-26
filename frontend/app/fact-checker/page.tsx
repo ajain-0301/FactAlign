@@ -38,7 +38,7 @@ export default function FactCheckerPage() {
     setSourcePages(undefined); setSource(it.source); setSummary(EXAMPLES[k].summary); setResult(null); setError(null);
   };
   const run = async () => {
-    if ((method === "claim_nli" || (method === "auto" && settings?.preferences.verifier === "claim_nli")) && !window.confirm("Extract claims with Groq? This uses one API request. Retrieval and NLI run locally.")) return;
+    if ((method === "claim_nli" || (method === "auto" && settings?.preferences.verifier === "claim_nli")) && !window.confirm("Extract claims with Groq? This usually uses one API request, with at most one retry if the output or quotes are invalid. Retrieval and NLI run locally.")) return;
     setLoading(true); setError(null); setResult(null);
     try { setResult(await api.verify({ source, summary, method, source_pages: sourcePages })); setFilter("all"); }
     catch (e) { setError((e as Error).message); } finally { setLoading(false); }

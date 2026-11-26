@@ -122,6 +122,53 @@ def test_atomic_extraction_single_call():
     client.complete.assert_called_once()
 
 
+def test_atomic_extraction_retries_nonverbatim_quote_once():
+    summary = 'The school opened.'
+    client = SimpleNamespace(complete=Mock(side_effect=[
+        json.dumps({'claims': [{'text': summary, 'summary_quote': 'The school opened today.'}]}),
+        json.dumps({'claims': [{'text': summary, 'summary_quote': summary}]}),
+    ]))
+
+    claims = pipeline.extract_claims(summary, client)
+
+    assert claims == [{'text': summary, 'summary_quote': summary}]
+    assert client.complete.call_count == 2
+
+
+def test_atomic_extraction_retries_malformed_json_once():
+    summary = 'The school opened.'
+    client = SimpleNamespace(complete=Mock(side_effect=[
+        'not valid json',
+        json.dumps({'claims': [{'text': summary, 'summary_quote': summary}]}),
+    ]))
+
+    claims = pipeline.extract_claims(summary, client)
+
+    assert claims == [{'text': summary, 'summary_quote': summary}]
+    assert client.complete.call_count == 2
+
+
+def test_llm_verifier_retries_malformed_json_once():
+    from app.services.verification import Retriever, llm_verify_claims
+
+    source = 'The school opened.'
+    client = SimpleNamespace(complete=Mock(side_effect=[
+        'not valid json',
+        json.dumps({'results': [{
+            'id': 0,
+            'status': 'supported',
+            'evidence': source,
+            'explanation': 'The source states this.',
+        }]}),
+    ]))
+
+    result = llm_verify_claims(client, source, [source], Retriever(source))
+
+    assert result[0]['status'] == 'supported'
+    assert result[0]['evidence_grounded'] is True
+    assert client.complete.call_count == 2
+
+
 @pytest.mark.parametrize(('claim', 'evidence', 'name', 'outcome'), [
     ('Seven schools opened.', 'Ten schools opened.', 'numbers', 'mismatch'),
     ('Seven schools cost 10 rupees.', 'Ten schools cost 10 rupees.', 'numbers', 'mismatch'),

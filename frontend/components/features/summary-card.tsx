@@ -43,7 +43,7 @@ export function SummaryCard({ run, onChange, compact }: { run: Run; onChange: (r
   };
   const verify = async () => {
     setVerifying(true); setError(null);
-    if ((verifyMethod === "claim_nli" || (verifyMethod === "auto" && settings?.preferences.verifier === "claim_nli")) && !window.confirm("Extract claims with Groq? This uses one API request. Retrieval and NLI run locally.")) { setVerifying(false); return; }
+    if ((verifyMethod === "claim_nli" || (verifyMethod === "auto" && settings?.preferences.verifier === "claim_nli")) && !window.confirm("Extract claims with Groq? This usually uses one API request, with at most one retry if the output or quotes are invalid. Retrieval and NLI run locally.")) { setVerifying(false); return; }
     try {
       const v = await api.verify({ source: run.source_text ?? "", summary: run.summary, run_id: run.id, method: verifyMethod });
       onChange({ ...run, verification: v, verification_metrics: v.metrics, verification_method: v.method });

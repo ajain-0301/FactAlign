@@ -57,9 +57,13 @@ def word_count(text: str) -> int:
 
 
 def has_negation(text: str) -> bool:
-    if _NT_RE.search(text):
+    normalized = fold(text).lower()
+    normalized = re.sub(r"\bnot\s+(?:only|just|merely)\b", " ", normalized)
+    normalized = re.sub(r"\bno\s+(?:fewer|less|more)\s+than\b", " ", normalized)
+    normalized = re.sub(r"\bnot\s+(?:uncommon|unlikely|impossible)\b", " ", normalized)
+    if _NT_RE.search(normalized):
         return True
-    return any(t in NEGATION for t in tokens(text))
+    return any(t in NEGATION for t in tokens(normalized))
 
 
 _ABBR = {"dr", "mr", "mrs", "ms", "prof", "st", "no", "vs", "etc", "rs", "jr", "sr", "inc", "ltd"}
@@ -213,8 +217,21 @@ GAZETTEER = [
     "भोपाल", "उत्तर प्रदेश", "महाराष्ट्र", "बिहार", "गुजरात", "राजस्थान", "पंजाब", "हरियाणा", "केरल",
     "तमिलनाडु", "कर्नाटक", "चीन", "अमेरिका", "पाकिस्तान", "रूस", "जापान", "नेपाल", "इसरो", "संयुक्त राष्ट्र",
     "सुप्रीम कोर्ट", "रिज़र्व बैंक", "नासा", "गूगल", "माइक्रोसॉफ्ट",
+    "India", "Delhi", "New Delhi", "Mumbai", "Bombay", "Kolkata", "Calcutta", "Chennai", "Madras",
+    "Bengaluru", "Bangalore", "Hyderabad", "Pune", "Jaipur", "Lucknow", "Patna", "Bhopal",
+    "Uttar Pradesh", "Maharashtra", "Bihar", "Gujarat", "Rajasthan", "Punjab", "Haryana", "Kerala",
+    "Tamil Nadu", "Karnataka", "China", "America", "Pakistan", "Russia", "Japan", "Nepal", "ISRO",
+    "United Nations", "Supreme Court", "Reserve Bank", "NASA", "Google", "Microsoft",
 ]
 _GAZ_FOLDED = [(fold(g), g) for g in sorted(GAZETTEER, key=len, reverse=True)]
+_ENTITY_ALIASES = {
+    "दिल्ली": "delhi", "new delhi": "delhi",
+    "मुंबई": "mumbai", "bombay": "mumbai",
+    "कोलकाता": "kolkata", "calcutta": "kolkata",
+    "चेन्नई": "chennai", "madras": "chennai",
+    "बेंगलुरु": "bengaluru", "bangalore": "bengaluru",
+    "भारत": "india", "इसरो": "isro",
+}
 _HONORIFIC = re.compile(
     rf"(?:श्री|श्रीमती|डॉ|डॉक्टर|प्रधानमंत्री|मुख्यमंत्री|अध्यक्ष|मंत्री)\.?\s+([{_DEV}]+(?:\s+[{_DEV}]+)?)"
 )
@@ -261,7 +278,21 @@ def extract_entities(text: str) -> list[str]:
 
 
 def entity_keys(entities: list[str]) -> set[str]:
-    return {fold(e).lower() for e in entities}
+    keys = {" ".join(tokens(e)) for e in entities}
+    return {_ENTITY_ALIASES.get(key, key) for key in keys if key}
+
+
+def entity_normalized_tokens(text: str, drop_stop: bool = False) -> list[str]:
+    raw_tokens = tokens(text, drop_stop=drop_stop)
+    entities = extract_entities(text)
+    entity_tokens = {token for entity in entities for token in tokens(entity)}
+    remaining = [token for token in raw_tokens if token not in entity_tokens]
+    normalized = [
+        token
+        for entity in sorted(entity_keys(entities))
+        for token in tokens(entity, drop_stop=drop_stop)
+    ]
+    return remaining + normalized
 
 
 def fact_density(sentence: str) -> float:

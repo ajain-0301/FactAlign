@@ -85,7 +85,7 @@ export default function SummarizePage() {
   const updateRun = (r: Run) => setResults((rs) => rs.map((x) => (x.id === r.id ? r : x)));
 
   const verifyBoth = async () => {
-    if (settings?.preferences.verifier === "claim_nli" && !window.confirm(`Extract claims with Groq for ${results.length} summaries? This uses up to ${results.length} API requests. Retrieval and NLI run locally.`)) return;
+    if (settings?.preferences.verifier === "claim_nli" && !window.confirm(`Extract claims with Groq for ${results.length} summaries? This may use up to ${results.length * 2} API requests (at most one retry per summary if the output or quotes are invalid). Retrieval and NLI run locally.`)) return;
     setLoading(true); setError(null);
     try {
       const next = await Promise.all(results.map(async (r) => {

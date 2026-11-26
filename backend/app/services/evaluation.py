@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
@@ -37,6 +38,7 @@ def _scope(runs: list[Run], scope: str, mode: str | None) -> list[Run]:
 def metrics_overview(db: Session, language: str | None = None, strategy: str | None = None,
                      experiment_id: int | None = None, scope: str = "all", mode: str | None = None) -> dict:
     runs = _scope(runs_repo.all_runs(db, language=language, strategy=strategy, experiment_id=experiment_id), scope, mode)
+    runs = [r for r in runs if r.language_detected != "english"] 
     everything = runs_repo.all_runs(db)
     groups_s: dict[str, list[Run]] = defaultdict(list)
     groups_l: dict[str, list[Run]] = defaultdict(list)
@@ -48,12 +50,35 @@ def metrics_overview(db: Session, language: str | None = None, strategy: str | N
     series = []
     for r in runs[-200:]:
         vm = (r.verification or {}).get("metrics") or {}
-        rg = metrics.rouge(r.summary, r.reference_summary)["rougeL"]["f1"] if r.reference_summary else None
+        rg = metrics.rouge(r.summary, r.reference_summary)["rougeL"] if r.reference_summary else None
         series.append({"run_id": r.id, "created_at": r.created_at.isoformat() + "Z", "strategy": r.strategy,
                        "language": r.language_detected, "mode": r.mode, "summary_words": r.summary_words,
                        "compression_ratio": r.compression_ratio, "inference_ms": r.inference_ms,
-                       "claim_support_rate": vm.get("support_rate"), "rougeL_f1": rg, "cmi": r.cmi})
+                       "claim_support_rate": vm.get("support_rate"), "rougeL_f1": rg["f1"] if rg else None,"rougeL_precision": rg["precision"] if rg else None, "rougeL_recall": rg["recall"] if rg else None, "cmi": r.cmi})
     ev = misc.latest_eval(db)
+    evaluations = db.scalars(select(EvaluationRun)).all()
+    rule_counts = []
+    for evaluation in evaluations:
+        verifier = (evaluation.results or {}).get("verifier") or {}
+        unsupported = (verifier.get("overall") or {}).get("unsupported_detection")
+        if verifier.get("method") == "rule" and unsupported and all(
+            isinstance(unsupported.get(key), int) for key in ("tp", "fp", "fn")
+        ):
+            rule_counts.append(unsupported)
+    if rule_counts:
+        aggregated = metrics.prf_from_counts(
+            sum(result["tp"] for result in rule_counts),
+            sum(result["fp"] for result in rule_counts),
+            sum(result["fn"] for result in rule_counts),
+        )
+        rule_verifier_metrics = {
+            key: aggregated[key] for key in ("precision", "recall")
+        }
+    else:
+        rule_verifier_metrics = None
+
+    lang_counts = Counter(r.language_detected for r in runs)
+    total = sum(lang_counts.values())  
     return {
         "totals": metrics.aggregate_runs(runs),
         "counts": {
@@ -67,9 +92,10 @@ def metrics_overview(db: Session, language: str | None = None, strategy: str | N
         "by_strategy": {k: metrics.aggregate_runs(v) for k, v in groups_s.items()},
         "by_language": {k: metrics.aggregate_runs(v) for k, v in groups_l.items()},
         "by_strategy_language": [{"strategy": s, "language": l, **metrics.aggregate_runs(v)} for (s, l), v in groups_sl.items()],
-        "language_distribution": dict(Counter(r.language_detected for r in runs)),
+        "language_distribution": {k: round(v / total * 100, 1) for k, v in lang_counts.items()} if total else {},
         "series": series,
         "latest_evaluation": _eval_out(ev) if ev else None,
+        "rule_verifier_metrics": rule_verifier_metrics,
         "formulas": metrics.FORMULAS,
         "notes": [
             "Claim-support rate is an automatic estimate from the verifier, not human ground truth.",
@@ -145,12 +171,14 @@ def run_evaluation(db: Session, settings: Settings, eff: Effective, strategies: 
     # verifier accuracy on labelled claims
     gold_pred: list[tuple[str, str]] = []
     by_lang: dict[str, list[tuple[str, str]]] = defaultdict(list)
-    for it in its:
+    labeled_items = samples.labeled_items()
+    for it in labeled_items:
         claims = [c["claim"] for c in it["labeled_claims"]]
         v = engine.verify_text(settings, eff, it["source"], "", vmethod, claims=claims, client=client)
         for c, r in zip(it["labeled_claims"], v["claims"]):
             gold_pred.append((c["label"], r["status"]))
             by_lang[it["language"]].append((c["label"], r["status"]))
+    n_labeled_claims = len(gold_pred)
 
     def _avg(xs): return metrics.avg(xs)
 
@@ -194,8 +222,8 @@ def run_evaluation(db: Session, settings: Settings, eff: Effective, strategies: 
             ("Demo mode: summaries come from a rule-based EXTRACTIVE engine and verification is rule-based; these "
              "numbers describe those baselines, not an LLM." if eff.mode == "demo" else
              f"Real mode: summaries generated by {eff.model}; verification method = {vmethod}."),
-            "Verifier precision/recall/F1 use the author-written claim labels (36 claims). The rules were developed "
-            "alongside these examples, so a high score here is a regression check, NOT evidence of general accuracy. "
+            f"Verifier precision/recall/F1 use {n_labeled_claims} author-written claims from the separate synthetic "
+            "demo set, not XL-Sum labels. These results are a regression check, NOT evidence of general accuracy. "
             "Use your own held-out, human-annotated claims for real conclusions.",
             "Demo-mode summaries are copied source sentences, so claim support of ~100% is expected and uninformative. "
             "The factuality comparison is only meaningful with real LLM summaries." if eff.mode == "demo" else
@@ -224,6 +252,6 @@ def export_rows(db: Session, **f) -> list[dict]:
             "compression_ratio": r.compression_ratio, "inference_ms": r.inference_ms, "cmi": r.cmi,
             "claims": vm.get("n_claims"), "claim_support_rate": vm.get("support_rate"),
             "rouge1_f1": rg["rouge1"]["f1"] if rg else None, "rouge2_f1": rg["rouge2"]["f1"] if rg else None,
-            "rougeL_f1": rg["rougeL"]["f1"] if rg else None,
+            "rougeL_f1": rg["rougeL"]["f1"] if rg else None, "rougeL_precision": rg["rougeL"]["precision"] if rg else None, "rougeL_recall": rg["rougeL"]["recall"] if rg else None,
         })
     return out

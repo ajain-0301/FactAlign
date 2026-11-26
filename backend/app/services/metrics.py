@@ -147,6 +147,8 @@ def aggregate_runs(runs: list) -> dict:
         "n_with_reference": len(rouge_vals),
         "rouge1_f1": avg([x["rouge1"]["f1"] for x in rouge_vals]),
         "rouge2_f1": avg([x["rouge2"]["f1"] for x in rouge_vals]),
+        "rougeL_precision": avg([x["rougeL"]["precision"] for x in rouge_vals]),
+        "rougeL_recall": avg([x["rougeL"]["recall"] for x in rouge_vals]),
         "rougeL_f1": avg([x["rougeL"]["f1"] for x in rouge_vals]),
     }
 

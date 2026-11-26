@@ -126,7 +126,7 @@ export default function HistoryPage() {
           </li>
         ))}
       </ul>
-      {items.length < total && <div className="flex justify-center"><Button onClick={() => load(items.length, true)} loading={loading}>Load more ({total - items.length} remaining)</Button></div>}
+      {items.length < total && <div className="flex justify-center"><Button onClick={() => load(items.length, true)} loading={loading}>Load more</Button></div>}
       {opening && <p className="text-center text-sm text-muted" role="status">Opening…</p>}
 
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)} wide title={open?.title || `Summary #${open?.id ?? ""}`} description={open ? `${formatDate(open.created_at)} · ${open.model}` : undefined}>

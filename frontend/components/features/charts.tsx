@@ -46,7 +46,7 @@ export function Donut({ data, label }: { data: { name: string; value: number }[]
         <Pie data={data} dataKey="value" nameKey="name" innerRadius={58} outerRadius={90} paddingAngle={3} stroke="none">
           {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
         </Pie>
-        <Tooltip {...tooltipStyle} />
+        <Tooltip {...tooltipStyle} formatter={(v) => `${v}%`} />
         <Legend wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </Frame>

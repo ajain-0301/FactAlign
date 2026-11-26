@@ -1,0 +1,115 @@
+{
+  "project": "FactAlign",
+  "dataset": "XL-Sum",
+  "random_seed": 42,
+  "documents_per_benchmark": 29,
+  "benchmarks_per_language": 6,
+  "total_benchmarks": 12,
+  "total_documents": 348,
+  "languages": {
+    "english": {
+      "source_file": "dataset/english_XLSum_v2.0/english_val.jsonl",
+      "benchmark_count": 6,
+      "total_documents": 174
+    },
+    "hindi": {
+      "source_file": "dataset/hindi_XLSum_v2.0/hindi_val.jsonl",
+      "benchmark_count": 6,
+      "total_documents": 174
+    }
+  },
+  "benchmarks": [
+    {
+      "file": "benchmark_01.json",
+      "benchmark_number": 1,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_02.json",
+      "benchmark_number": 2,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_03.json",
+      "benchmark_number": 3,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_04.json",
+      "benchmark_number": 4,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_05.json",
+      "benchmark_number": 5,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_06.json",
+      "benchmark_number": 6,
+      "language": "english",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_07.json",
+      "benchmark_number": 7,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_08.json",
+      "benchmark_number": 8,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_09.json",
+      "benchmark_number": 9,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_10.json",
+      "benchmark_number": 10,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_11.json",
+      "benchmark_number": 11,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_12.json",
+      "benchmark_number": 12,
+      "language": "hindi",
+      "document_count": 29,
+      "annotations_complete": false
+    },
+    {
+      "file": "benchmark_13.json",
+      "benchmark_number": 13,
+      "language": "hinglish",
+      "document_count": 12,
+      "annotations_complete": false
+    }
+  ],
+  "generated_at": "2026-11-22T09:31:48.023478+00:00"
+}

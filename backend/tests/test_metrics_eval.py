@@ -79,6 +79,7 @@ def test_language_and_cmi():
 def test_metrics_empty_state_has_no_fabricated_numbers(client):
     m = client.get("/api/evaluation/metrics").json()
     assert m["totals"] == {"n_runs": 0} and m["by_strategy"] == {} and m["latest_evaluation"] is None
+    assert m["rule_verifier_metrics"] is None
     assert m["formulas"]["compression_ratio"]
 
 
@@ -92,6 +93,38 @@ def test_metrics_reflect_stored_runs(client):
     assert m["counts"]["demo"] == 2 and m["counts"]["real"] == 0
     assert client.get("/api/evaluation/metrics", params={"strategy": "standard"}).json()["totals"]["n_runs"] == 1
     assert len(m["series"]) == 2
+
+
+def test_rule_verifier_metrics_aggregate_saved_labeled_counts(monkeypatch):
+    from types import SimpleNamespace
+    from app.services import evaluation as evaluation_service
+
+    def evaluation(method, tp, fp, fn):
+        return SimpleNamespace(results={
+            "verifier": {
+                "method": method,
+                "overall": {"unsupported_detection": {
+                    "precision": 0.0, "recall": 0.0, "f1": 0.0,
+                    "tp": tp, "fp": fp, "fn": fn,
+                }},
+            },
+        })
+
+    evaluations = [
+        evaluation("rule", 2, 10, 11),
+        evaluation("rule", 4, 30, 22),
+        evaluation("claim_nli", 100, 0, 0),
+    ]
+    monkeypatch.setattr(evaluation_service.runs_repo, "all_runs", lambda *args, **kwargs: [])
+    monkeypatch.setattr(evaluation_service.misc, "latest_eval", lambda db: None)
+
+    class FakeDB:
+        def scalars(self, query):
+            return SimpleNamespace(all=lambda: evaluations)
+
+    result = evaluation_service.metrics_overview(FakeDB())["rule_verifier_metrics"]
+
+    assert result == {"precision": 0.1304, "recall": 0.1538}
 
 
 def test_evaluation_run_demo(client):
@@ -109,8 +142,36 @@ def test_evaluation_run_demo(client):
     assert any("Demo mode" in n for n in res["notes"])
     m = client.get("/api/evaluation/metrics").json()
     assert m["latest_evaluation"]["id"] == d["id"] and m["counts"]["evaluation"] == 18
+    if res["verifier"]["method"] == "rule":
+        assert m["rule_verifier_metrics"] == {
+            key: res["verifier"]["overall"]["unsupported_detection"][key]
+            for key in ("precision", "recall")
+        }
     # evaluation runs must not pollute the user's history
     assert client.get("/api/history").json()["total"] == 0
+
+
+def test_evaluation_verifier_uses_separate_labelled_set(client, monkeypatch):
+    from app.services import samples
+
+    monkeypatch.setattr(samples, "items", lambda language="all": [{
+        "id": "unlabelled-summary-doc",
+        "pair_id": "unlabelled-summary-doc",
+        "language": "en",
+        "title": "Sample",
+        "source": EN_DOC,
+        "reference_summary": "The repo rate rose to 6.5% on 8 February 2023.",
+        "labeled_claims": [],
+    }])
+
+    response = client.post(
+        "/api/evaluation/run",
+        json={"strategies": ["standard"], "length": "short"},
+    )
+    assert response.status_code == 200, response.text
+    result = response.json()["results"]
+    assert result["verifier"]["overall"]["n_labeled_claims"] == 36
+    assert any("separate synthetic demo set" in note for note in result["notes"])
 
 
 def test_verifier_on_benchmark_is_reasonable(client):

@@ -40,3 +40,10 @@ export const LANG_LABEL: Record<string, string> = {
 };
 export const LANG_SHORT: Record<string, string> = { hi: "Hindi", en: "English", hinglish: "Hinglish" };
 export const STRATEGY_LABEL: Record<string, string> = { standard: "Standard", factuality: "Factuality-aware" };
+
+export function languageBucket(language: string) {
+  const normalized = language.trim().toLowerCase();
+  return normalized === "en" || normalized === "english" || normalized === "hinglish"
+    ? "hinglish"
+    : language;
+}

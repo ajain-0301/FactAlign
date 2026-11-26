@@ -248,9 +248,9 @@ FactAlign/
 
 ### Factuality verification
 1. Split the summary into claims (sentences, `;`).
-2. Retrieve the best source passage (IDF-weighted token containment with light prefix stemming; single sentences and 2-sentence windows).
+2. Retrieve several relevant source passages (IDF-weighted token containment with light prefix stemming; single sentences and 2-sentence windows).
 3. Judge:
-   * **rule** — flags changed **numbers** (with unit scaling: `1.5 crore` = `15 million`; Devanagari digits = ASCII), changed **dates** (day/month/year, English and Hindi month names), **entity substitution**, **negation flips** (English + Hindi/Hinglish cues), and low overlap → *Unverifiable*.
+   * **rule** — remains offline; combines cached local **XLM-R NLI** with checks for changed **numbers** (with unit scaling: `1.5 crore` = `15 million`; Devanagari digits = ASCII), changed **dates** (day/month/year, English and Hindi month names), normalized **entity aliases** with exact matching, and clause-scoped **negation** (English + Hindi/Hinglish cues). Conflicting signals remain *Unverifiable*; install `requirements-nli.txt` and cache the configured models first.
    * **llm** — The Groq-hosted model judges each claim against the source and must quote evidence; quotes that are not literally in the source are discarded (`evidence_grounded: false`).
    * **hybrid** — LLM verdict, but a rule check may **downgrade** "supported" when a claim's number/date exists nowhere in the source.
 4. Output per claim: `claim, status, evidence, explanation, checks, evidence_score`; `confidence` is **always `null`** because neither method yields a calibrated probability (`evidence_score` is a lexical match, not a probability). If evidence is insufficient the status is *Unverifiable*, never a guess.
@@ -271,7 +271,7 @@ Automatic verification is an estimate, not a guarantee (the UI repeats this wher
 | Lexical similarity | cosine of term-frequency vectors — **not** embedding-based semantic similarity | — |
 | CMI | `100·(1 − max(n_hi, n_en)/(n_hi+n_en))`; 0 = monolingual | — |
 
-P/R/F1 are **never estimated without labels**; when labels/references are absent the UI shows "n/a / no references". The Evaluation page separates stored-run metrics from the labelled benchmark.
+P/R/F1 are **never estimated without labels**; when labels/references are absent the UI shows "n/a / no references". The Evaluation page separates stored-run metrics from benchmark evaluation. XL-Sum documents in `sample_data/benchmarks/` have no gold claim labels, so verifier P/R/F1 use the separate 9-document, 36-claim synthetic set in `sample_data/benchmark.json`.
 
 ### Code-mixing analysis (assignment requirement)
 The benchmark has three topics, each as **Hindi (Devanagari), Hinglish, English** with the same facts. *Run benchmark* computes per language and strategy: ROUGE, fact precision, claim support, compression, CMI, and the **Hinglish − Hindi difference per pair** (`code_mixing_gap`), plus verifier accuracy / macro-F1 by language. With 3 pairs this is illustrative, not statistically meaningful.

@@ -20,20 +20,46 @@ are necessary return {"error":"too_many_claims"}. Return an empty claims list fo
 
 
 def extract_claims(summary, client):
-    data = _parse_json(client.complete(EXTRACT_SYSTEM, 'SUMMARY:\n' + summary, max_tokens=6000))
-    rows = data.get('claims')
-    if not isinstance(rows, list) or len(rows) > 100:
-        raise ProviderError('Claim extraction returned invalid or excessive claims.', 502)
-    result = []
-    for row in rows:
-        if not isinstance(row, dict):
-            raise ProviderError('Claim extraction returned an invalid claim.', 502)
-        text, quote = row.get('text'), row.get('summary_quote')
-        if not isinstance(text, str) or not text.strip() or len(text) > 2000 or not isinstance(quote, str) or not quote.strip() or quote not in summary:
-            raise ProviderError('Extracted claim is missing a valid summary quote.', 502)
-        if text not in [r['text'] for r in result]:
-            result.append({'text': text.strip(), 'summary_quote': quote})
-    return result
+    for attempt in range(2):
+        system = EXTRACT_SYSTEM
+        if attempt:
+            system += (
+                '\nYour previous response was either not valid JSON or contained a summary_quote that was not '
+                'copied verbatim. Retry once with complete valid JSON, copying each quote exactly from the summary, '
+                'including its original punctuation, spacing and characters.'
+            )
+        raw = client.complete(system, 'SUMMARY:\n' + summary, max_tokens=6000)
+        try:
+            data = _parse_json(raw)
+        except ProviderError as exc:
+            if attempt == 0:
+                continue
+            raise ProviderError(
+                'Claim extraction returned malformed JSON after one retry. Please retry verification.',
+                502,
+            ) from exc
+        rows = data.get('claims')
+        if not isinstance(rows, list) or len(rows) > 100:
+            raise ProviderError('Claim extraction returned invalid or excessive claims.', 502)
+        result = []
+        invalid_quote = False
+        for row in rows:
+            if not isinstance(row, dict):
+                raise ProviderError('Claim extraction returned an invalid claim.', 502)
+            text, quote = row.get('text'), row.get('summary_quote')
+            if not isinstance(text, str) or not text.strip() or len(text) > 2000:
+                raise ProviderError('Claim extraction returned an invalid claim.', 502)
+            if not isinstance(quote, str) or not quote.strip() or quote not in summary:
+                invalid_quote = True
+                continue
+            if text not in [r['text'] for r in result]:
+                result.append({'text': text.strip(), 'summary_quote': quote})
+        if not invalid_quote:
+            return result
+    raise ProviderError(
+        'Claim extraction could not provide a verbatim summary quote after one retry. Please retry verification.',
+        502,
+    )
 
 
 def passages(source, pages, models):

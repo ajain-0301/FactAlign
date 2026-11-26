@@ -22,6 +22,7 @@ export function StatusChip({ status }: { status: ClaimStatus }) {
 
 function ClaimRow({ c, index }: { c: Claim; index: number }) {
   const [open, setOpen] = React.useState(false);
+  const hasPassages = (c.evidence_passages?.length ?? 0) > 0;
   return (
     <li className={cn("rounded-xl border bg-surface p-4",
       c.status === "supported" ? "border-border" : c.status === "contradicted" ? "border-bad/35" : "border-warn/35")}>
@@ -32,21 +33,20 @@ function ClaimRow({ c, index }: { c: Claim; index: number }) {
       {c.support_score !== undefined && <p className="mt-2 text-sm">Uncalibrated support score: <strong>{c.support_score.toFixed(1)}/100</strong> (maximum passage entailment × 100; not a probability)</p>}
       {c.contradiction_warning && <p className="mt-2 text-sm text-bad" role="status">Contradiction warning — review the evidence even when the support score is high.</p>}
       {c.conflicting_evidence && <p className="mt-2 text-sm text-warn">Conflicting source passages: both support and contradiction detected.</p>}
-      {c.evidence_passages && <div className="mt-3 space-y-3">
-        {c.evidence_passages.length === 0 && <p className="text-sm text-muted">No source passages available.</p>}
-        {c.evidence_passages.map((p) => <div key={p.passage_id} className="rounded-lg bg-sunken p-3 text-sm">
+      {hasPassages && <div className="mt-3 space-y-3">
+        {(c.evidence_passages??[]).map((p) => <div key={p.passage_id} className="rounded-lg bg-sunken p-3 text-sm">
           <p className="text-xs text-muted">Passage {p.passage_id + 1} · {p.page === null ? "Page unavailable (pasted text)" : `Page ${p.page}`} · characters {p.start}–{p.end}</p>
           <blockquote className="mt-1 whitespace-pre-wrap">{p.text}</blockquote>
           <dl className="mt-2 flex flex-wrap gap-3 text-xs">
-            <div><dt className="inline">Entailment </dt><dd className="inline">{pct(p.nli.entailment)}</dd></div>
-            <div><dt className="inline">Contradiction </dt><dd className="inline">{pct(p.nli.contradiction)}</dd></div>
-            <div><dt className="inline">Neutral </dt><dd className="inline">{pct(p.nli.neutral)}</dd></div>
+            <div><dt className="inline">Entailment </dt><dd className="inline">{p.nli?.entailment!= null ? pct(p.nli?.entailment) : "-"}</dd></div>
+            <div><dt className="inline">Contradiction </dt><dd className="inline">{p.nli?.contradiction != null ? pct(p.nli?.contradiction) : "-"}</dd></div>
+            <div><dt className="inline">Neutral </dt><dd className="inline">{p.nli?.neutral != null ? pct(p.nli?.neutral) : "-"}</dd></div>
           </dl>
-          <p className="mt-1 text-xs text-muted">Retrieval similarity: {p.retrieval_similarity.toFixed(3)} (relevance only)</p>
+          <p className="mt-1 text-xs text-muted">Retrieval similarity: {(p.retrieval_similarity ?? 0).toFixed(3)} (relevance only)</p>
           <ul className="mt-2 space-y-1">{p.checks.filter((k) => !["match", "not_applicable"].includes(k.outcome ?? "")).map((k) => <li key={k.name} className="text-xs text-warn">{k.name} · {k.outcome}: {k.detail}</li>)}</ul>
         </div>)}
       </div>}
-      {!c.evidence_passages && (c.evidence ? (
+      {!hasPassages && (c.evidence ? (
         <blockquote className="mt-3 flex gap-2 rounded-lg bg-sunken px-3 py-2.5 text-sm leading-relaxed">
           <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted" aria-hidden />
           <span><span className="mb-0.5 block text-[11px] font-medium uppercase tracking-wide text-muted">Source evidence</span>{c.evidence}</span>

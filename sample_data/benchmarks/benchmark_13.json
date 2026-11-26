@@ -1,0 +1,122 @@
+[
+  {
+    "id": "benchmark_013_doc_01",
+    "pair_id": "upi-and-cross-border-digital-payments-01",
+    "language": "hinglish",
+    "title": "UPI & Cross-Border Digital Payments",
+    "source": "India mein digital payments ka ecosystem pichle kuch saalon mein poori tarah badal gaya hai, jisme UPI ka sabse bada haath hai. NPCI ke recent figures ke mutabik, har mahine 14 billion se zyada UPI transactions process ho rahe hain, jinki total value 20 lakh crore rupees ko cross kar chuki hai. Ab yeh system sirf India tak limited nahi raha, balki France, UAE, Singapore, Sri Lanka aur Mauritius jaise deshon mein bhi Indian tourists UPI ke zariye payment kar sakte hain. RuPay credit cards ko UPI se link karne ke feature ne bhi small merchants ke beech credit adoption ko tezi se badhaya hai. Halanki rural areas mein abhi bhi stable internet connectivity aur digital fraud awareness ek bada challenge bana hua hai. Experts ka maanna hai ki offline UPI Lite aur voice-based payment features aane se agle do saalon mein 300 million naye users is network se jud sakte hain.",
+    "reference_summary": "India mein UPI transactions har mahine 14 billion aur ₹20 lakh crore ke paar pahunch gaye hain, aur ab yeh kai videshi deshon mein bhi use ho raha hai. Rural connectivity aur fraud awareness ke challenges ke bawajood, offline UPI Lite aur voice-based features se 300 million naye users judne ki umeed hai.",
+    "labeled_claims": [],
+    "dataset_id": "upi-and-cross-border-digital-payments-01"
+  },
+  {
+    "id": "benchmark_013_doc_02",
+    "pair_id": "delhi-metro-expansion-and-green-initiatives-02",
+    "language": "hinglish",
+    "title": "Delhi Metro Expansion & Green Initiatives",
+    "source": "Delhi Metro Rail Corporation (DMRC) ka network ab 390 kilometers se bhi zyada lamba ho chuka hai, jisme 285 se upar operational stations shamil hain. Phase-4 ke under kai naye corridors par kaam chal raha hai, jisse Outer Delhi aur NCR ke peripheral areas ki connectivity kaafi improve hogi. Magenta Line aur Pink Line par driverless train operations shuru hone ke baad peak hours mein trains ki frequency badhi hai aur human error ke chances kam hue hain. Iske alawa DMRC duniya ke un kuch metro networks mein se ek hai jo apni total electricity requirement ka lagbhag 30 se 35 percent hissa solar energy se poora karta hai. Rewa Solar Power Project se aane wali bijli ka istemal daytime train operations aur stations ko power dene ke liye kiya jata hai. Phir bhi, monsoon aur extreme winter smog ke dauran last-mile connectivity aur feeder buses ki kami commuters ke liye ek persistent problem rehti hai.",
+    "reference_summary": "DMRC ka network 390 km ke paar pahunch gaya hai aur driverless trains ke saath-saath yeh apni 30-35% bijli ki zarurat solar energy se poori karta hai. Halanki Phase-4 se connectivity badh rahi hai, lekin monsoon aur smog ke dauran last-mile connectivity abhi bhi ek badi samasya hai.",
+    "labeled_claims": [],
+    "dataset_id": "delhi-metro-expansion-and-green-initiatives-02"
+  },
+  {
+    "id": "benchmark_013_doc_03",
+    "pair_id": "electric-vehicles-ev-and-battery-ecosystem-in-india-03",
+    "language": "hinglish",
+    "title": "Electric Vehicles (EV) & Battery Ecosystem in India",
+    "source": "India mein electric two-wheelers aur three-wheelers ki sales ne pichle do financial years mein record growth register ki hai, khaas kar Bengaluru, Delhi, Pune aur Mumbai jaise cities mein. Government ne FAME-II scheme ke baad ab EMPS aur PM E-DRIVE jaisi policies introduce ki hain taaki buyers ko upfront purchase price par direct subsidy mil sake. Lekin yeh subsidy sirf unhi electric vehicles par milti hai jo strict localization norms aur advanced lithium-ion battery standards ko meet karte hain. Charging infrastructure abhi bhi highway routes par limited hai, jiski wajah se long-distance electric car buyers mein range anxiety dekhi jati hai. Is problem ko solve karne ke liye oil marketing companies aur private startups milkar national highways par har 25 se 50 kilometer par fast-charging stations laga rahe hain. Saath hi, India mein lithium reserves milne aur domestic battery gigafactories lagne se 2028 tak EV batteries ki cost 20 se 25 percent tak girne ki umeed hai.",
+    "reference_summary": "India mein EV sales tezi se badh rahi hain aur government EMPS aur PM E-DRIVE schemes ke zariye localized EVs par direct subsidy de rahi hai. Highways par fast-charging stations lagne aur domestic battery manufacturing badhne se 2028 tak EV batteries 20-25% tak sasti hone ki umeed hai.",
+    "labeled_claims": [],
+    "dataset_id": "electric-vehicles-ev-and-battery-ecosystem-in-india-03"
+  },
+  {
+    "id": "benchmark_013_doc_04",
+    "pair_id": "5g-rollout-and-telecom-data-consumption-04",
+    "language": "hinglish",
+    "title": "5G Rollout & Telecom Data Consumption",
+    "source": "Reliance Jio aur Bharti Airtel ne record speed se kaam karte hue India ke lagbhag har district aur tehsil mein apna 5G network roll out kar diya hai. Global speed-testing reports ke hisab se 5G launch ke baad India ki median mobile download speed 100 Mbps ke paar pahunch gayi hai, jo 4G ke dauran sirf 15 se 20 Mbps ke beech rehti thi. High-speed internet aur saste data plans ki wajah se India mein per-user average monthly data consumption 25 GB se upar nikal gaya hai, jo duniya mein sabse zyada hai. Telecom operators ne 5G upgrade ke liye lakhon crore rupees spend kiye hain, jiski recovery ke liye ab tariff plans mein 15 se 20 percent tak hike dekha ja raha hai. Rural pockets mein abhi bhi indoor 5G signal penetration weak hai kyunki high-frequency spectrum walls ko easily cross nahi kar pata. Aane wale time mein Fixed Wireless Access (5G AirFiber) un areas mein broadband pahunchane ka main medium banega jahan optical fiber bichhana mushkil hai.",
+    "reference_summary": "Jio aur Airtel ke 5G rollout se India ki median download speed 100 Mbps ke paar aur monthly data usage 25 GB se zyada ho gaya hai. Kharche ki recovery ke liye tariff rates badh rahe hain, jabki rural areas mein broadband ke liye 5G AirFiber aham bhumika nibhayega.",
+    "labeled_claims": [],
+    "dataset_id": "5g-rollout-and-telecom-data-consumption-04"
+  },
+  {
+    "id": "benchmark_013_doc_05",
+    "pair_id": "isro-chandrayaan-3-and-commercial-space-sector-05",
+    "language": "hinglish",
+    "title": "ISRO, Chandrayaan-3 & Commercial Space Sector",
+    "source": "Chandrayaan-3 mission ki kamyabi ke baad India duniya ka pehla desh ban gaya jisne Moon ke South Pole ke paas soft landing achieve ki, aur overall soft landing karne wala chautha desh bana. Sabse badi baat yeh rahi ki ISRO ne is poore mission ko roughly 615 crore rupees ke budget mein complete kiya, jo kai international space missions aur Hollywood sci-fi movies se bhi kam hai. Lander Vikram aur Rover Pragyan ne lunar surface par sulphur, aluminium, calcium aur iron jaise elements ki presence confirm ki aur temperature variations ka critical data bheja. Is success ke baad Indian space startups ko global investors se funding milne mein kaafi boost mila hai, aur IN-SPACe ke through private companies ab khud ke satellites aur launch vehicles bana rahi hain. Agla bada milestone Gaganyaan mission hai, jisme Indian astronauts ko Low Earth Orbit mein bhejne ki taiyari chal rahi hai. Experts ke mutabik, global commercial space economy mein India ka share agle ek decade mein 2 percent se badh kar 8 se 10 percent tak pahunch sakta hai.",
+    "reference_summary": "Chandrayaan-3 ne ₹615 crore ke kam budget mein Moon ke South Pole par soft landing karke itihas racha aur lunar surface ka zaruri data bheja. Is kamyabi se Indian space startups ko funding boost mila hai aur Gaganyaan mission ke saath global space economy mein India ka share 8-10% tak badhne ki umeed hai.",
+    "labeled_claims": [],
+    "dataset_id": "isro-chandrayaan-3-and-commercial-space-sector-05"
+  },
+  {
+    "id": "benchmark_013_doc_06",
+    "pair_id": "rbi-monetary-policy-inflation-and-home-loans-06",
+    "language": "hinglish",
+    "title": "RBI Monetary Policy, Inflation & Home Loans",
+    "source": "Reserve Bank of India (RBI) ne retail inflation ko apne 4 percent ke comfort target ke aas-paas rakhne ke liye lambe samay tak repo rate ko 6.5 percent par hold rakha hai. Jab central bank repo rate ko high rakhta hai, toh commercial banks ke liye RBI se paisa borrow karna mehnga padta hai, jiska seedha asar home loans aur auto loans ke interest rates par dikhta hai. Floating-rate home loan lene wale middle-class borrowers ko pichle do saalon mein ya toh apni monthly EMI badhani padi hai ya phir loan ka tenure kai saal aage badhana pada hai. Food inflation—especially sabziyon, dalon aur cereals ki keematon mein seasonal utar-chadhav—RBI ke liye rate cuts karne mein sabse badi rukawat bani hui hai. Doosri taraf, high interest rates ka fayda senior citizens aur risk-averse investors ko mila hai kyunki bank Fixed Deposits (FDs) par 7 se 8 percent tak interest mil raha hai. Economists ka maanna hai ki jab tak headline CPI inflation consistently 4.5 percent se neeche nahi aata, tab tak aggressive rate cuts ki umeed kam hai.",
+    "reference_summary": "Food inflation ke karan RBI ne repo rate ko 6.5% par hold rakha hai, jisse home loan borrowers ki EMI ya tenure badh gaya hai. Halanki high interest rates se senior citizens ko FDs par 7-8% ka achha return mil raha hai, par inflation 4.5% se neeche aane tak rate cuts ki umeed kam hai.",
+    "labeled_claims": [],
+    "dataset_id": "rbi-monetary-policy-inflation-and-home-loans-06"
+  },
+  {
+    "id": "benchmark_013_doc_07",
+    "pair_id": "delhi-ncr-winter-air-pollution-and-aqi-crisis-07",
+    "language": "hinglish",
+    "title": "Delhi-NCR Winter Air Pollution & AQI Crisis",
+    "source": "Har saal October ke aakhri hafte se lekar December tak Delhi-NCR ki hawa severely polluted ho jati hai aur Air Quality Index (AQI) aksar 400 se 450 ke paar chala jata hai. Popular perception ke opposite, sirf Punjab aur Haryana mein hone wali stubble burning (parali) hi is pollution ka akela karan nahi hai. IIT Kanpur aur TERI ki studies ke mutabik, winter months mein vehicular emissions, construction dust, industrial smoke aur biomass burning milkar local pollution ka 60 percent se zyada hissa banate hain. November mein temperature girne aur wind speed kam hone ki wajah se 'temperature inversion' hota hai, jisse pollutants ground level ke paas trap ho jate hain aur smog ki moti chadar ban jati hai. Situation control karne ke liye Commission for Air Quality Management (CAQM) GRAP Stage-3 aur Stage-4 lagata hai, jisme construction activities aur BS-III petrol / BS-IV diesel vehicles par ban lagaya jata hai. Doctors ke hisab se is toxic hawa mein lambe samay tak saans lena ek din mein 15 se 20 cigarettes peene ke barabar lungs ko damage kar sakta hai.",
+    "reference_summary": "Delhi-NCR ke winter pollution mein sirf parali hi nahi, balki local vehicles, construction dust aur temperature inversion ka 60% se zyada haath hota hai. AQI 400-450 paar hone par GRAP restrictions lagaye jate hain kyunki yeh zehreeli hawa roz 15-20 cigarettes jitna nuksan pahunchati hai.",
+    "labeled_claims": [],
+    "dataset_id": "delhi-ncr-winter-air-pollution-and-aqi-crisis-07"
+  },
+  {
+    "id": "benchmark_013_doc_08",
+    "pair_id": "generative-ai-and-indian-it-hiring-shifts-08",
+    "language": "hinglish",
+    "title": "Generative AI & Indian IT Hiring Shifts",
+    "source": "Indian IT services industry mein entry-level recruitment pichle do saalon mein kaafi slow down hui hai kyunki repetitive coding, unit testing aur basic customer support ke kaam ab Generative AI tools automate kar rahe hain. TCS, Infosys aur Wipro jaisi badi companies apne existing workforce ko AI copilots aur prompt engineering mein upskill kar rahi hain taaki kam employees ke saath zyada projects deliver kiye ja sakein. Ab campus placements mein companies freshers se sirf basic C++, Java ya Python syntax ki knowledge expect nahi karti, balki cloud architecture, data pipelines aur API integration ki practical understanding maangti hain. Global Capability Centers (GCCs) ne halanki India mein hiring badhayi hai, kyunki multinational corporations apne core R&D aur AI engineering hubs Bengaluru, Hyderabad aur Pune mein set up kar rahe hain. Industry analysts ka kehna hai ki traditional outsourcing billing models par pressure badhega aur outcome-based pricing ka trend tezi se aage aayega. Is transition period mein mid-level engineers jinke paas domain expertise aur AI workflow integration skills hain, unki demand sabse zyada high hai.",
+    "reference_summary": "Generative AI ke karan Indian IT companies mein entry-level hiring slow hui hai aur ab freshers se basic coding ke bajay cloud aur API skills maangi ja rahi hain. Doosri taraf, MNCs ke Global Capability Centers (GCCs) India mein R&D aur AI engineers ki hiring tezi se badha rahe hain.",
+    "labeled_claims": [],
+    "dataset_id": "generative-ai-and-indian-it-hiring-shifts-08"
+  },
+  {
+    "id": "benchmark_013_doc_09",
+    "pair_id": "pm-surya-ghar-rooftop-solar-scheme-09",
+    "language": "hinglish",
+    "title": "PM Surya Ghar Rooftop Solar Scheme",
+    "source": "Central Government ne residential houses mein clean energy adoption badhane ke liye PM Surya Ghar Muft Bijli Yojana launch ki hai, jiska target 1 crore gharon ki chhat par solar panels lagwana hai. Is scheme ke under 1 kW system par 30,000 rupees, 2 kW par 60,000 rupees, aur 3 kW ya usse bade rooftop solar system par maximum 78,000 rupees tak ki direct subsidy milti hai. Jo households 3 kW ka system install karte hain, unhe har mahine lagbhag 300 units tak free electricity mil sakti hai, aur extra generate hui bijli net-metering ke zariye grid ko wapas bechi ja sakti hai. Subsidy ka paisa directly consumer ke bank account mein DBT ke through transfer hota hai, lekin iske liye MNRE-registered vendor se hi installation karwana zaruri hai. High-rise apartments aur rented houses mein rehne wale logon ke liye rooftop space aur RWA permissions abhi bhi ek practical bottleneck bana hua hai. Agar yeh target poora hota hai, toh residential electricity distribution companies (DISCOMs) par peak daytime load kaafi kam ho jayega.",
+    "reference_summary": "PM Surya Ghar Yojana ke tahat 1 crore gharon par rooftop solar lagane ke liye ₹78,000 tak ki direct subsidy aur 300 units tak free bijli mil rahi hai. High-rise apartments mein space aur RWA permissions ki chunautiyon ke bawajood, is scheme se DISCOMs par peak daytime load kam hoga.",
+    "labeled_claims": [],
+    "dataset_id": "pm-surya-ghar-rooftop-solar-scheme-09"
+  },
+  {
+    "id": "benchmark_013_doc_10",
+    "pair_id": "smartphone-blue-light-melatonin-and-sleep-quality-10",
+    "language": "hinglish",
+    "title": "Smartphone Blue Light, Melatonin & Sleep Quality",
+    "source": "Raat ko sone se 30 se 60 minute pehle smartphone, tablet ya laptop ki bright screen dekhne se sleep architecture par direct negative asar padta hai. Screens se nikalne wali short-wavelength blue light aankhon ke retina ke zariye brain ko yeh false signal bhejti hai ki abhi din ka waqt hai. Is signal ki wajah se pineal gland se release hone wale sleep hormone 'melatonin' ka production suppress ho jata hai, jisse neend aane mein 30 se 45 minute tak ki deri ho sakti hai. Sirf neend der se aana hi problem nahi hai, balki REM aur deep slow-wave sleep phases bhi chhoti ho jati hain, jisse 7 se 8 ghante bistar par rehne ke baad bhi subah thakan mehsoos hoti hai. Sleep specialists suggest karte hain ki night mode ya blue-light filter glasses kuch had tak madad karte hain, lekin social media scrolling se hone wali mental stimulation phir bhi brain ko alert rakhti hai. Best practice yeh hai ki sone se kam se kam ek ghanta pehle screens band kar di jayein aur kamre ki lighting warm aur dim rakhi jaye.",
+    "reference_summary": "Raat ko sone se pehle smartphone ki blue light dekhne se sleep hormone melatonin ruk jata hai, jisse neend der se aati hai aur deep sleep kam hoti hai. Behtar neend ke liye sone se kam se kam ek ghanta pehle screens band karna aur kamre mein dim warm lighting rakhna sabse achha upay hai.",
+    "labeled_claims": [],
+    "dataset_id": "smartphone-blue-light-melatonin-and-sleep-quality-10"
+  },
+  {
+    "id": "benchmark_013_doc_11",
+    "pair_id": "mutual-funds-sip-boom-and-equity-market-risks-11",
+    "language": "hinglish",
+    "title": "Mutual Funds, SIP Boom & Equity Market Risks",
+    "source": "India mein retail investors ka trend traditional gold aur real estate se hatkar financial assets, especially mutual funds ki taraf tezi se shift hua hai. AMFI ke data ke mutabik, monthly Systematic Investment Plan (SIP) inflows 20,000 crore rupees ka milestone cross kar chuke hain, aur active SIP accounts ki sankhya 8 crore se upar pahunch gayi hai. Small-cap aur mid-cap mutual funds mein pichle do saalon mein sabse zyada retail paisa aaya hai kyunki in categories ne short term mein 25 se 35 percent tak ke returns dikhaye hain. Halanki SEBI aur market veterans ne baar-baar warn kiya hai ki mid aur small-cap stocks mein valuations kaafi stretched ho chuki hain aur market correction aane par inme heavy drawdown ho sakta hai. Mutual fund investments market risks ke adheen hote hain, isliye 1 se 3 saal ke short horizon ke liye pure equity funds mein paisa lagana risky saabit ho sakta hai. Financial planners recommend karte hain ki investors ko apni risk appetite ke hisab se large-cap, flexi-cap aur debt funds ke beech proper asset allocation maintain karna chahiye.",
+    "reference_summary": "India mein monthly SIP inflows ₹20,000 crore aur active accounts 8 crore ke paar pahunch gaye hain, jisme small aur mid-cap funds mein sabse zyada paisa laga hai. Overvaluation aur short-term market risk ko dekhte hue, experts large-cap, flexi-cap aur debt funds mein balanced asset allocation ki salah dete hain.",
+    "labeled_claims": [],
+    "dataset_id": "mutual-funds-sip-boom-and-equity-market-risks-11"
+  },
+  {
+    "id": "benchmark_013_doc_12",
+    "pair_id": "daily-protein-requirement-and-indian-vegetarian-diets-12",
+    "language": "hinglish",
+    "title": "Daily Protein Requirement & Indian Vegetarian Diets",
+    "source": "Nutrition science ke standard guidelines ke hisab se ek average sedentary adult ko daily apni body weight ke per kilogram par kam se kam 0.8 gram protein consume karna chahiye. Yani agar kisi ka wazan 70 kg hai, toh use bina kisi heavy workout ke bhi rozana roughly 56 gram protein ki zarurat hoti hai taaki basic muscle repair aur immune function chalta rahe. Jo log regular gym, strength training ya endurance running karte hain, unke liye yeh daily requirement badh kar 1.6 se 2.0 gram per kg body weight tak pahunch jati hai. Indian Council of Medical Research (ICMR) ki surveys batati hain ki urban aur rural India ke 70 percent se zyada logon ki diet mein protein ki kami hai aur unki calories mostly refined carbs (chawal aur gehun) se aati hain. Vegetarian diets mein dal, chana, rajma, paneer, soya chunks aur curd achhe sources hain, lekin plant proteins mein aksar kuch essential amino acids ki bioavailability kam hoti hai. Isliye dietitians suggest karte hain ki har meal mein grains aur pulses ko combine karke khaya jaye aur zarurat padne par whey ya plant-based protein supplements ka sahara liya jaye.",
+    "reference_summary": "Ek average adult ko rozana 0.8g/kg aur workout karne walon ko 1.6-2.0g/kg protein chahiye, lekin ICMR ke mutabik 70% se zyada Indians ki diet mein protein ki kami hai. Vegetarian diet mein amino acids poora karne ke liye grains aur pulses ko milakar khana ya protein supplements lena zaruri hai.",
+    "labeled_claims": [],
+    "dataset_id": "daily-protein-requirement-and-indian-vegetarian-diets-12"
+  }
+]

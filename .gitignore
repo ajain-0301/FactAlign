@@ -13,3 +13,4 @@ frontend/.next/
 frontend/tsconfig.tsbuildinfo
 frontend/next-env.d.ts
 .venv/
+dataset/

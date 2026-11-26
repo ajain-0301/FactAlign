@@ -34,6 +34,28 @@ def health(db: Session = Depends(dbm.get_session), settings: Settings = Depends(
 @router.get("/samples")
 def get_samples():
     b = samples.load_benchmark()
-    return {"dataset": b.get("dataset"), "note": b.get("note"),
-            "items": [{k: i[k] for k in ("id", "pair_id", "language", "title", "source", "reference_summary")} for i in b["items"]],
-            "assignment_examples": b.get("assignment_examples", [])}
+
+    return {
+        "dataset": b.get("dataset"),
+        "note": b.get("note"),
+        "benchmark_count": b.get("benchmark_count", 0),
+        "total_items": b.get("total_items", 0),
+        "benchmarks": b.get("benchmarks", []),
+        "items": [
+            {
+                k: i[k]
+                for k in (
+                    "id",
+                    "pair_id",
+                    "language",
+                    "title",
+                    "source",
+                    "reference_summary",
+                )
+            }
+            for i in b["items"]
+        ],
+        "assignment_examples": b.get(
+            "assignment_examples", []
+        ),
+    }
